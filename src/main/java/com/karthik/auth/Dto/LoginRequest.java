@@ -1,4 +1,4 @@
-package Dto;
+package com.karthik.auth.Dto;
 
 public class LoginRequest {
 
