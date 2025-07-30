@@ -1,6 +1,6 @@
-package Repository;
+package com.karthik.auth.Repository;
 
-import Model.User;
+import com.karthik.auth.Model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
