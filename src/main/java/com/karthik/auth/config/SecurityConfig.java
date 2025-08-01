@@ -1,29 +1,33 @@
 package com.karthik.auth.config;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
 
-    public SecurityConfig() {
-        System.out.println(">>> SecurityConfig initialized <<<");
+    private JwtFilter jwtfilter;
+
+    public SecurityConfig(JwtFilter jwtfilter) {
+        this.jwtfilter = jwtfilter;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        System.out.println(">>> Building SecurityFilterChain <<<");
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/register","/api/auth/login").permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin(form -> form.disable()) // disable Spring's default form login
-                .httpBasic(basic -> basic.disable()); // disable basic auth too// ✅ new non-deprecated form
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtfilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

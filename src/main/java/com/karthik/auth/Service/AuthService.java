@@ -4,6 +4,7 @@ import com.karthik.auth.Dto.LoginRequest;
 import com.karthik.auth.Dto.RegisterRequest;
 import com.karthik.auth.Model.User;
 import com.karthik.auth.Repository.UserRepository;
+import com.karthik.auth.Util.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,9 @@ public class AuthService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JWTUtil jwtutil;
 
     public String registerUser(RegisterRequest registerRequest) {
         if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
@@ -43,6 +47,6 @@ public class AuthService {
             throw new RuntimeException("Invalid credentials");
         }
 
-        return "Login successful";
+        return jwtutil.generateToken(email);
     }
 }

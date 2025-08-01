@@ -12,19 +12,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/auth/")
+@RequestMapping("/api/auth")
 public class AuthController {
     @Autowired
     private AuthService authService;
 
 
-    @PostMapping("register")
+    @PostMapping("/register")
     public ResponseEntity<APIResponse> registerUser(@RequestBody RegisterRequest registerRequest){
         authService.registerUser(registerRequest);
         return ResponseEntity.ok(new APIResponse("User registered successfully"));
     }
 
-    @PostMapping("login")
+    @PostMapping("/login")
     public ResponseEntity<APIResponse>login(@RequestBody LoginRequest loginRequest) {
         return ResponseEntity.ok(new APIResponse(authService.loginUser(loginRequest)));
     }
