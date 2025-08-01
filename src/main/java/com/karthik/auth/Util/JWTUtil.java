@@ -1,5 +1,6 @@
 package com.karthik.auth.Util;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -14,9 +15,10 @@ public class JWTUtil {
     private final long EXPIRATION_TIME=864000;
     private final Key key= Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-    public String generateToken(String email){
+    public String generateToken(String email,String role){
         return Jwts.builder()
                 .setSubject(email)
+                .claim("role",role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis()+EXPIRATION_TIME))
                 .signWith(key)
@@ -29,6 +31,15 @@ public class JWTUtil {
                 .getSubject();
 
     }
+    public String extractRole(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("role", String.class);
+    }
+
 
     public boolean validateToken(String token){
         try{
@@ -38,5 +49,12 @@ public class JWTUtil {
         catch (JwtException e){
             return false;
         }
+    }
+    private Claims getClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }

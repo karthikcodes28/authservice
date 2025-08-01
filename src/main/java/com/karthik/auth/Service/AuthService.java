@@ -30,6 +30,7 @@ public class AuthService {
         user.setEmail(registerRequest.getEmail());
         user.setName(registerRequest.getName());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        user.setRole("USER");
 
         userRepository.save(user);
         return "User is registered successfully";
@@ -42,11 +43,14 @@ public class AuthService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found or invalid credentials"));
 
-        // Corrected password check
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
 
-        return jwtutil.generateToken(email);
+        // Get the role from user
+        String role = user.getRole();
+
+        return jwtutil.generateToken(email, role);
     }
+
 }
